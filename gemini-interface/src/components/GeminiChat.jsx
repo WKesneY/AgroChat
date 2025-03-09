@@ -10,6 +10,9 @@ export default function GeminiChat() {
     const [input, setInput] = useState("");
     const [response, setResponse] = useState("");
     const [history, setHistory] = useState([]);
+    const [temperature, setTemperature] = useState(0.7);
+    const [topP, setTopP] = useState(0.9); 
+    const [topK, setTopK] = useState(40);
     const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
@@ -30,6 +33,11 @@ export default function GeminiChat() {
 
             const res = await axios.post(url, {
                 contents: [{ role: "user", parts: [{ text: input }] }],
+                generationConfig: {
+                    temperature: temperature, 
+                    topP: topP,
+                    topK: topK, 
+                  },
             });
 
             const reply = res.data.candidates[0].content.parts[0].text;
@@ -57,10 +65,10 @@ export default function GeminiChat() {
 
     return (
         <div className="chat-container">
-                {/* Imagem à esquerda */}
+
     <img src={LinhaLateral} alt="Imagem Esquerda" className="left-image" />
     
-    {/* Imagem à direita */}
+
     <img src={LinhaLateral} alt="Imagem Direita" className="right-image" />
 
             <div className="chat-box">
@@ -72,6 +80,49 @@ export default function GeminiChat() {
 
                     <h1>AGRO CHAT</h1>
                 </div>
+{/* REGIAO DE TESTE */}
+
+<div className="settings">
+                    <div className="setting-item">
+                        <label>Temperatura: {temperature.toFixed(2)}</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={temperature}
+                            onChange={(e) => setTemperature(parseFloat(e.target.value))}
+                        />
+                        <p className="description">Controla a criatividade (0 = determinístico, 1 = criativo).</p>
+                    </div>
+                    <div className="setting-item">
+                        <label>Top-p: {topP.toFixed(2)}</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={topP}
+                            onChange={(e) => setTopP(parseFloat(e.target.value))}
+                        />
+                        <p className="description">Controla a diversidade (0 = conservador, 1 = diverso).</p>
+                    </div>
+                    <div className="setting-item">
+                        <label>Top-k: {topK}</label>
+                        <input
+                            type="range"
+                            min="1"
+                            max="100"
+                            step="1"
+                            value={topK}
+                            onChange={(e) => setTopK(parseInt(e.target.value))}
+                        />
+                        <p className="description">Limita o número de opções consideradas (1 = restrito, 100 = amplo).</p>
+                    </div>
+                </div>
+
+{/* REGIAO DE TESTE */}
+
                 
                 <div className="chat-input">
                     <input
@@ -83,6 +134,12 @@ export default function GeminiChat() {
                         ENVIAR
                     </button>
                 </div>
+
+
+
+
+
+
                 <div className="chat-response">
                     <h2>RESPOSTA:</h2>
                     <p>{response}</p>
